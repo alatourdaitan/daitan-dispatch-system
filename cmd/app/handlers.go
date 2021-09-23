@@ -11,6 +11,101 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func (app *application) AddNewDriver(w http.ResponseWriter, r *http.Request) {
+	var d *models.Driver
+	err := json.NewDecoder(r.Body).Decode(&d)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	driver, err := services.GetDriverService().AddNewDriver(d)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	body, err := json.Marshal(driver)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	app.info.Println("Driver included")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(body)
+}
+
+func (app *application) AddNewLocation(w http.ResponseWriter, r *http.Request) {
+	var l *models.Location
+	err := json.NewDecoder(r.Body).Decode(&l)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	vars := mux.Vars(r)
+	uuid := vars["uuid"]
+	location, err := services.GetDriverService().AddNewLocation(uuid, l)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	body, err := json.Marshal(location)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	app.info.Println("Location created")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(body)
+}
+
+func (app *application) NewDriverStatus(w http.ResponseWriter, r *http.Request) {
+	var d *models.Driver
+	err := json.NewDecoder(r.Body).Decode(&d)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	vars := mux.Vars(r)
+	uuid := vars["uuid"]
+	driver, err := services.GetDriverService().UpdateDriverStatus(uuid, &d.Status)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	body, err := json.Marshal(driver)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	app.info.Println("Location created")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(body)
+}
+
+func (app *application) FindDriver(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	uuid := vars["uuid"]
+	driver, err := services.GetDriverService().FindDriver(uuid)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	body, err := json.Marshal(driver)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	app.info.Println("Location created")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(body)
+}
 func (app *application) requestTrip(w http.ResponseWriter, r *http.Request) {
 
 	var u *models.TripRequest

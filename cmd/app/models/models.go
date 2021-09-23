@@ -11,6 +11,14 @@ const (
 	Cancel
 )
 
+type DriverStatus int
+
+const (
+	DRiVER_AVAILABLE = 1
+	DRiVER_ON_TRIP
+	DRiVER_UNAVAILABLE
+)
+
 type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
@@ -32,6 +40,7 @@ type Driver struct {
 	Ranking float64 `json:"ranking"`
 	Trips   int     `json:"trips"`
 	Car     Car
+	Status  DriverStatus
 }
 
 type TripRequest struct {
